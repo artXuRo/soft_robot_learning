@@ -1,0 +1,56 @@
+1、关于sofa的模板库
+由于我是直接看的tutorials里的demo，所以就先来看看基本的模块怎么用把
+从help文件里看，模板库是从stlib中调用的（-。-怪不得我一开始编译时候不加stlib直接就崩了）
+分别是:
+stlib.physics;
+stlib.visuals;
+stlib.solver;
+stlib.scene;
+stlib.tools;
+今天先从第一个开始：stlib.physics		这里包含了5个sublib
+stlib.physics.constraints 外部约束模板
+stlib.physics.collision 用来减少对碰撞和接触处理的模板
+stlib.physics.deformable 可变性对象模板
+stlib.physics.mixedmaterial 官方没给注释，但是看起来就是个混合材料模板
+stlib.physics.rigid 为sofa提供一个标准刚性对象库（用来做支架时候直接调用就完事了的意思？）
+
+从 stlib.physics.constraints
+
+(1) stlib.physics.constraints.fixedbox用法结构是：
+stlib.physics.constraints.FixedBox(applyTo=None, atPositions=[-1.0, -1.0, -1.0, 1.0, 1.0, 1.0], 
+name='FixedBox', doVisualization=False, position=None, constraintStrength='1e12',
+ doRecomputeDuringSimulation=False)
+ 从源代码来看applyTo 是节点的名称
+			 atPositions是节点的位置 数据类型vec6f [x,x,x,x,x,x]vec6f三维直线类型固定向量
+			 name 给这个节点命名 数据类型str 加“”节点名字纯英文
+			 doVisualization控制是否显示方框，数据类型是bool
+			 由于是固定的，所以这里 constraintStrength直接就是1e12了
+			 doRecomputeDuringSimulation 这里是问，模拟过程中是否再计算，false，不计算
+			 position这里是none和else没啥区别
+
+(2)stlib.physics.constraints.PartiallyFixedBox用法结构为：
+stlib.physics.constraints.PartiallyFixedBox(attachedTo=None, box=[-1.0, -1.0, -1.0, 1.0, 1.0, 1.0],
+ fixedAxis=[1, 1, 1], name='PartiallyFixedBox', drawBoxes=False, fixAll=False, doUpdate=False)
+ 其中 attachedTo 将会被应用于哪个节点
+ box 同 atPositions
+ fixedAxis指定固定哪个轴 （PS看起来还要了解opencv的数据结构，这里是opencv里的 vec3bool类型）
+ name同上文的name
+ drawBoxes 控制是否显示方框，default就是false了
+ fixAll 如果是ture就对所有点都施加部分固定,缺省值也是false
+ doUpdate default也是false
+ 这玩意的用法和上面那个fix，大同小异，知识这个是固定了一个轴，也就是限制了2个自由度
+ 在 fixedAxis里来规定，（0,1,0)就是y轴不动了
+ 
+ (3) stlib.physics.constraints.SubTopology 我去子拓扑了？？
+ stlib.physics.constraints.SubTopology(attachedTo=None, containerLink=None, boxRoiLink=None,
+ linkType='tetrahedron', name='modelSubTopo', poissonRatio=0.3, youngModulus=18000)
+   attachedTo 这个节点会在哪里被创建
+   containerLink 到容器的路径，并把dataField连接在一起 这里用 ‘@../container.position’？这个不懂
+   boxRoiLink 把 boxRoi和datafield连接  这个我也不懂了！！！！！mark一下，研究一下
+   linkType 这个是表示哪个类型是子拓扑，这玩意不是py写的？ tetrahedron四边形网格 triangle三角形网格 四面体，六面体网格
+   name 子节点的名称
+   youngModulus 杨氏模量
+   poissonRatio 泊松比
+   
+   
+ 
