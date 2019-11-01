@@ -10,7 +10,7 @@ stlib.tools;
 今天先从第一个开始：stlib.physics		这里包含了5个sublib
 stlib.physics.constraints 外部约束模板
 stlib.physics.collision 用来减少对碰撞和接触处理的模板
-stlib.physics.deformable 可变性对象模板
+stlib.physics.deformable 可变形对象模板
 stlib.physics.mixedmaterial 官方没给注释，但是看起来就是个混合材料模板
 stlib.physics.rigid 为sofa提供一个标准刚性对象库（用来做支架时候直接调用就完事了的意思？）
 
@@ -51,6 +51,76 @@ stlib.physics.constraints.PartiallyFixedBox(attachedTo=None, box=[-1.0, -1.0, -1
    name 子节点的名称
    youngModulus 杨氏模量
    poissonRatio 泊松比
+ “”“在给定约束的过程中，如果是一个运动模型，那么一定要使用 SubTopology模板了”“”
    
    
+接着 stlib.physics.collision
+这个就很简单了
+stlib.physics.collision.CollisionMesh(attachedTo=None, surfaceMeshFileName=None,
+ name='collision', rotation=[0.0, 0.0, 0.0], translation=[0.0, 0.0, 0.0], collisionGroup=None,
+ mappingType='BarycentricMapping'
+ 这里 attachedTo 定义一下约束哪个node就行了，
+ 以及 surfaceMeshFileName也要定理 一般mesh/xx.mesh文件，这里也是递归搜索的，别放错地方了
+ name就default就行了
+ 然后这里定义了旋转变换都为0
+ PS 如果在定义复杂模型的过程中，需要约束的节点一定要定义，格式可以参考 surce文件的标准格式
  
+ 
+然后是 stlib.physics.deformable
+在这个模板里，用来创建一个弹性材料对象，这个很重要
+这个plugin是用py来写的，这个库的调用，是将材料定义了成了一个类
+python基础 class def啥的了解一下就完事了
+class stlib.physics.deformable.ElasticMaterialObject(attachedTo=None,
+ volumeMeshFileName=None, name='ElasticMaterialObject', rotation=[0.0, 0.0, 0.0], 
+ translation=[0.0, 0.0, 0.0], scale=[1.0, 1.0, 1.0], surfaceMeshFileName=None, 
+ collisionMesh=None, withConstrain=True, surfaceColor=[1.0, 1.0, 1.0], poissonRatio=0.3,
+ youngModulus=18000, totalMass=1.0, solver=None)
+
+“”“=。=我已经看不懂了，为什么我要经历这个”“”
+
+
+stlib.physics.rigid
+	RigidObject 从surface mesh添加一个刚体
+	Cube 创建一个刚性立方体
+	Sphere 创建一个刚性球体
+	Floor 创建刚性地面
+	这里也许可以看看这个案例，更好学习一点
+	~.\plugins\SoftRobots\docs\tutorials\FirstSteps
+	这个案例里，用到了cube和floor 包括从scene和visuals导入环境配置文件
+	cube和floor的用法都是 from stlib.physics.rigid import cube/floor
+	这里就相对简单多了
+	surfaceMeshFileName还是要指向网格文件的
+	这里有个totalMass的定义，暂时不知道干嘛用的
+	translation, rotation这写也是用vec3f来规定的是否可动
+	uniformScale，就是和原本对象的缩放比
+	isAStaticObject 布尔型，文件不移动，是否对碰撞有反应
+	
+	Cube Sphere Floor都是俩参数
+	Node 和 vec6f参数，前者规定节点，后者规定形状完毕
+	
+stlib.visuals
+	看完源码，只有个ShowGrid
+	直接 from stlib.visuals import ShowGrid就完事了
+	
+	
+stlib.solver
+除了默认的solver还有两种
+1、 EulerImplicit 
+2、 CGLinearSolver
+使用默认的直接在定义的节点下
+	DefaultSolver(节点名)
+	
+	要使用另外两种
+	node.createObject('E/C','name')
+
+
+
+
+
+
+
+
+
+
+
+
