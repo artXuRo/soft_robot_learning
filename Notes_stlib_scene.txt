@@ -1,0 +1,45 @@
+这个文件用来放对scene库的学习把
+还是从docs来看
+scene库由5个模板组成
+Scene MainHeader ContactHeader Node Wrapper
+先来第一个
+Scene这个用来创建全默认属性的场景
+应该是用不到了，看看源码也知道怎么配置，反正是一个class
+
+
+Interaction
+ class Interaction（object）
+	def _int_(self,parent,target) %结构就是2个对象一个源，一个对象
+	self.node = parent.creatChild("Interaction") % 规定源对象对应节点 
+	self.node.createObject("EulerImplicitSolver") % 创建欧拉解算器
+	self.node.createObject("CGLinearSolver") %创建线性解算器
+	for target in targets
+		self.node.addChild(target) % 规定被交互对象，是没有解算器的
+		
+		
+		“”“我感觉这个场景是用来和实物交互的，不知道是不是，以后试试把”“”
+		
+
+	
+MainHeader
+	这个就很常用了吧，很多demo里都有
+	跟着demo里设置就行了，做完这些我开始做project的时候再看
+	主要是设置重力，对象节点
+	
+ContactHeader
+	这个也很常用
+	主要设置检测计算的距离，接触距离和摩擦系数，摩擦系数是一个全局值
+	
+Node
+	这就是在父节点下创建一个子节点，没什么好说的
+	Node（parentNode,name) %前者父节点名称，后者要创建的子节点名称
+	
+Wrapper
+	这是一个用来创建自己场景的类 
+	定义施加的节点 接触方程 和将在附加函数中使用的参数
+	这个就是自己建模时候使用到的
+	
+	
+
+	
+	
